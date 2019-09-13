@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import java.util.ArrayList;
 
+//Notes: Does not handle negative numbers. Sorts in-place on the input array.
 public class Radix {
     public static void main(String[] args) {
         int[] input = new int[args.length];
