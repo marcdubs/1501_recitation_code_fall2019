@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class KMPStart {
+public class KMP {
     public static final int CHAR_START = 0;
     public static final int CHAR_END = 256;
 
@@ -43,7 +43,17 @@ public class KMPStart {
         }
     }
 
+    //This finds the first occurance of our pattern, might not be exactly what we want in all scenarios.
     public int search(String toSearch) {
-        return -1;
+        int state = 0;
+        for(int i = 0; i < toSearch.length() && state < pattern.length; i++) {
+            int c = toSearch.charAt(i);
+            state = dfa[c][state];
+            if(state == pattern.length) {
+                return i-pattern.length+1;
+            }
+        }
+
+        return toSearch.length();
     }
 }
