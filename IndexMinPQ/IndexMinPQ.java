@@ -24,27 +24,50 @@ public class IndexMinPQ<Key extends Comparable<Key>> {
     ***************************************************************************/
 
     public void insert(int i, Key key) {
-
+        if(contains(i)) {
+            throw new IllegalArgumentException("Index " + i + " already exists in pq.");
+        }
+        size++;
+        pq[size] = i;
+        qp[i] = size;
+        keys[i] = key;
+        swim(size);
     }
 
     public boolean contains(int i) {
-        return false;
+        if(i > capacity || i < 0) {
+            return false;
+        }
+        return qp[i] != -1;
     }
 
     public int minIndex() {
-        return -1;
+        return pq[1];
     }
 
     public Key minKey() {
-        return null;
+        return keys[minIndex()];
     }
 
     public void deleteMin() {
-
+        int min = pq[1];
+        exch(1, size--);
+        sink(1);
+        assert min == pq[size+1];
+        qp[min] = -1;        // delete
+        keys[min] = null;    // to help with garbage collection
+        pq[size+1] = -1;
     }
 
-    public Key delete(int index) {
-        return null;
+    public Key delete(int i) {
+        Key key = keyOf(i);
+        int index = qp[i];
+        exch(index, size--);
+        swim(index);
+        sink(index);
+        keys[i] = null;
+        qp[i] = -1;
+        return key;
     }
 
     public Key keyOf(int i) {
