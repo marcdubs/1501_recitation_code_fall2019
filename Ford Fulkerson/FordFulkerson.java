@@ -5,6 +5,25 @@ public class FordFulkerson {
 
     public FordFulkerson(FlowNetwork G, int s, int t) {
         value = 0.0;
+        while(hasAugmentingPath(G, s, t)) {
+            int v = t;
+            double minResidualCapacity = Double.MAX_VALUE;
+            while(v != s) {
+                FlowEdge edge = edgeTo[v];
+                if(edge.residualCapacityTo(v) < minResidualCapacity) {
+                    minResidualCapacity = edge.residualCapacityTo(v);
+                }
+                v = edge.other(v);
+            }
+
+            v = t;
+            while(v != s) {
+                FlowEdge edge = edgeTo[v];
+                edge.addResidualFlowTo(v, minResidualCapacity);
+                v = edge.other(v);
+            }
+            value += minResidualCapacity;
+        }
     }
 
     /**
@@ -23,6 +42,25 @@ public class FordFulkerson {
     private boolean hasAugmentingPath(FlowNetwork G, int s, int t) {
         edgeTo = new FlowEdge[G.V()];
         marked = new boolean[G.V()];
+
+        Queue<Integer> queue = new Queue<Integer>();
+        queue.enqueue(s);
+        marked[s] = true;
+        while(!queue.isEmpty() && !marked[t]) {
+            int v = queue.dequeue();
+
+            for(FlowEdge edge : G.adj(v)) {
+                int w = edge.other(v);
+
+                if(edge.residualCapacityTo(w) > 0 && !marked[w]) {
+                    edgeTo[w] = edge;
+                    marked[w] = true;
+                    queue.enqueue(w);
+                }
+            }
+        }
+
+        return marked[t];
     }
 
     public static void main(String[] args) {
